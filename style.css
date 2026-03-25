@@ -1,0 +1,152 @@
+/* --- TEMEL SIFIRLAMA --- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background-color: #FFF4F4;
+    color: #5A0F2E;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    flex-direction: column;
+    overflow-x: hidden;
+    transition: background-color 0.5s ease;
+}
+
+body.dark-mode { background-color: #1A1A2E; color: #E0E0E0; }
+
+/* --- INDEX SAYFASI: NEFES ALAN BUTON --- */
+.btn-container { z-index: 10; position: relative; }
+
+.btn {
+    display: inline-block;
+    padding: 18px 50px;
+    background-color: #5A0F2E;
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    box-shadow: 0 10px 25px rgba(90, 15, 46, 0.2);
+    transition: all 0.4s ease-in-out;
+    border: none;
+    cursor: pointer;
+    animation: breathe 3s ease-in-out infinite; /* Nefes alma efekti */
+}
+
+.btn:hover {
+    transform: translateY(-5px) scale(1.05);
+    background-color: #7B1E3A;
+    box-shadow: 0 15px 40px rgba(90, 15, 46, 0.4), 0 0 20px rgba(244, 194, 194, 0.5);
+    animation-play-state: paused; /* Üstüne gelince durur */
+}
+
+body.dark-mode .btn { background-color: #E94560; box-shadow: 0 10px 25px rgba(233, 69, 96, 0.3); }
+
+/* --- EMOJİ YAĞMURU --- */
+.flower {
+    position: fixed; /* Ekrana göre sabit konum */
+    top: -50px;
+    z-index: 1;
+    font-size: 1.5rem;
+    pointer-events: none;
+    animation: fall linear infinite;
+}
+
+/* --- KARANLIK MOD BUTONU --- */
+#dark-mode-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #5A0F2E;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 100;
+    color: white;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+body.dark-mode #dark-mode-toggle { background-color: #E94560; }
+
+/* --- MESAJ SAYFASI (C.HTML) --- */
+#message-container { text-align: center; width: 90%; max-width: 700px; z-index: 10; }
+#countdown { font-size: 3rem; color: #D36C8A; font-weight: 200; margin-bottom: 20px; }
+#message {
+    font-family: 'Playfair Display', serif;
+    padding: 50px;
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    text-align: left;
+    line-height: 1.8;
+}
+body.dark-mode #message { background: #16213E; color: white; }
+
+/* --- ANIMASYONLAR --- */
+@keyframes breathe {
+    0%, 100% { transform: scale(1); box-shadow: 0 10px 25px rgba(90, 15, 46, 0.2); }
+    50% { transform: scale(1.03); box-shadow: 0 15px 35px rgba(90, 15, 46, 0.3); }
+}
+
+@keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+
+/* --- GERİ SAYIM TASARIMI --- */
+.countdown-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 40px auto;
+    width: 160px;
+    height: 160px;
+}
+
+/* Halkaların genel ayarı */
+.progress-ring__circle, .progress-ring__circle-bg {
+    transition: stroke-dashoffset 1s ease-in-out;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    stroke-linecap: round;
+}
+
+#countdown-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#countdown {
+    font-size: 4rem; /* Rakamı büyüttük */
+    color: #5A0F2E;
+    font-weight: 700;
+    line-height: 1;
+    text-shadow: 0 2px 10px rgba(211, 108, 138, 0.2);
+}
+
+.days-label {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    font-weight: 600;
+    color: #D36C8A;
+    margin-top: -5px;
+}
+
+/* Karanlık modda renkleri patlat */
+body.dark-mode #countdown { color: #FFFFFF; }
+body.dark-mode #progress-bar { stroke: #E94560; filter: drop-shadow(0 0 8px #E94560); }

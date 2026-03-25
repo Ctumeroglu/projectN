@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sana Özel...</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="message-container">
+        <div class="label">Kaydın Silinmesine Kalan Gün</div>
+        
+<div class="countdown-wrapper">
+    <svg class="progress-ring" width="160" height="160">
+        <circle class="progress-ring__circle-bg" stroke="rgba(244, 194, 194, 0.4)" stroke-width="10" fill="transparent" r="70" cx="80" cy="80"/>
+        <circle id="progress-bar" class="progress-ring__circle" stroke="#d36c8a" stroke-width="10" fill="transparent" r="70" cx="80" cy="80"/>
+    </svg>
+    <div id="countdown-container">
+        <span id="countdown">--</span>
+        <span class="days-label">GÜN</span>
+    </div>
+</div>
+        
+        <div id="message">
+            <button id="dark-mode-toggle">🌙</button>
+            <span id="text-content">
+                <div class="skeleton skeleton-text"></div>
+                <div class="skeleton skeleton-text"></div>
+                <div class="skeleton skeleton-text short"></div>
+            </span>
+        </div>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
