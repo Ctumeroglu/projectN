@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Senin sağladığın güncel Firebase yapılandırması
 const firebaseConfig = {
     apiKey: "AIzaSyALPm-92IPjZYadmz3x7vMC4y-hVCd61A8",
     authDomain: "silme-3f2b4.firebaseapp.com",
@@ -19,64 +18,66 @@ export async function handleMessageLogic() {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
     const textContentEl = document.getElementById("text-content");
-    const countdownEl = document.getElementById("countdown");
     const circle = document.getElementById('progress-bar');
 
     if (!id || !textContentEl) return;
 
     const ref = doc(db, "messages", id);
-    
-    // Silinme Tarihi: 2 Nisan 2026 (Ay indeksi 3 = Nisan)
-    const expiryDate = new Date(2026, 3, 2); 
-    const now = new Date();
+    // Hedef: 3 Nisan 2026, Saat 00:00 (Nisan ayı indeksi 3'tür)
+    const expiryDate = new Date(2026, 3, 3, 0, 0, 0); 
 
-    // 1. Önce kalan günü hesaplayalım
-    const diff = expiryDate - now;
-    const daysLeft = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+    const updateCountdown = async () => {
+        const now = new Date();
+        const diff = expiryDate - now; // Milisaniye cinsinden fark
 
-    // 2. Dairesel ilerleme çubuğunu (Progress Bar) güncelleme
-    if (circle) {
-        // r="70" için çevre hesaplama: 2 * PI * r
-        const radius = 70; 
-        const circumference = radius * 2 * Math.PI;
-        
-        circle.style.strokeDasharray = `${circumference} ${circumference}`;
-        
-        // 30 günlük bir periyodu %100 kabul ederek barın doluluk oranını belirle
-        const maxDays = 30; 
-        const percentage = Math.min(daysLeft / maxDays, 1);
-        const offset = circumference - (percentage * circumference);
-        
-        // Barın yavaşça dolması için offseti uygula
-        circle.style.strokeDashoffset = offset;
-    }
-
-    // 3. Süre dolduysa otomatik sil ve kullanıcıyı bilgilendir
-    if (now >= expiryDate) {
-        try {
-            await deleteDoc(ref);
-        } catch (e) {
-            console.error("Silme hatası:", e);
+        if (diff <= 0) {
+            try {
+                await deleteDoc(ref);
+                textContentEl.textContent = "Bu gizli kayıt 3 Nisan itibarıyla imha edilmiştir.";
+            } catch (e) {
+                textContentEl.textContent = "Erişim süresi doldu.";
+            }
+            document.getElementById("hours").textContent = "00";
+            document.getElementById("minutes").textContent = "00";
+            document.getElementById("seconds").textContent = "00";
+            return;
         }
-        textContentEl.textContent = "Bu gizli kayıt 2 Nisan itibarıyla imha edilmiştir.";
-        if (countdownEl) countdownEl.textContent = "0";
-        return;
-    }
 
-    // 4. Mesajı getir ve ekrana yaz
+        // Zaman birimlerini hesapla (GÜNÜ ATLIYORUZ, toplam saati alıyoruz)
+        const totalHours = Math.floor(diff / (1000 * 60 * 60)); // Toplam saati hesaplar (örn: 23, 48, 72 gibi)
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        // Ekrana yazdır (tek hanelilerin başına 0 ekleyerek)
+        document.getElementById("hours").textContent = totalHours.toString().padStart(2, '0');
+        document.getElementById("minutes").textContent = m.toString().padStart(2, '0');
+        document.getElementById("seconds").textContent = s.toString().padStart(2, '0');
+
+        // Progress bar (Daire) güncelleme
+        if (circle) {
+            const radius = 70;
+            const circumference = radius * 2 * Math.PI;
+            circle.style.strokeDasharray = `${circumference} ${circumference}`;
+            
+            const maxDurationHours = 24; // Daireyi 24 saatlik bir periyoda göre doldur (opsiyonel)
+            const percentageHours = Math.min(totalHours / maxDurationHours, 1);
+            
+            circle.style.strokeDashoffset = circumference - (percentageHours * circumference);
+        }
+    };
+
+    // İlk mesajı getir
     try {
         const snap = await getDoc(ref);
         if (snap.exists()) {
-            // Skeleton loader'ı temizle ve gerçek mesajı yaz
-            textContentEl.textContent = snap.data().text;
-            
-            // Sayısal geri sayımı güncelle
-            if (countdownEl) countdownEl.textContent = daysLeft;
+            textContentEl.textContent = snap.data().text; // "Denemeden bilemezsin..." verisini çeker
+            // Geri sayımı her saniye güncellemek için başlat
+            setInterval(updateCountdown, 1000); 
+            updateCountdown(); // İlk açılışta hemen çalıştır
         } else {
-            textContentEl.textContent = "Mesaj bulunamadı veya daha önce silindi.";
+            textContentEl.textContent = "Mesaj bulunamadı.";
         }
     } catch (e) {
-        console.error("Bağlantı hatası:", e);
-        textContentEl.textContent = "Bağlantı hatası oluştu. Lütfen internetinizi kontrol edin.";
+        textContentEl.textContent = "Bağlantı hatası.";
     }
 }

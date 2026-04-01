@@ -9,26 +9,28 @@
 </head>
 <body>
     <div id="message-container">
-        <div class="label">Kaydın Silinmesine Kalan Gün</div>
+        <div class="label">Kaydın Silinmesine Kalan Süre</div>
         
-<div class="countdown-wrapper">
-    <svg class="progress-ring" width="160" height="160">
-        <circle class="progress-ring__circle-bg" stroke="rgba(244, 194, 194, 0.4)" stroke-width="10" fill="transparent" r="70" cx="80" cy="80"/>
-        <circle id="progress-bar" class="progress-ring__circle" stroke="#d36c8a" stroke-width="10" fill="transparent" r="70" cx="80" cy="80"/>
-    </svg>
-    <div id="countdown-container">
-        <span id="countdown">--</span>
-        <span class="days-label">GÜN</span>
-    </div>
-</div>
+        <div class="countdown-wrapper">
+            <svg class="progress-ring" width="160" height="160">
+                <circle class="progress-ring__circle-bg" stroke="rgba(244, 194, 194, 0.4)" stroke-width="10" fill="transparent" r="70" cx="80" cy="80"/>
+                <circle id="progress-bar" class="progress-ring__circle" stroke="#d36c8a" stroke-width="10" fill="transparent" r="70" cx="80" cy="80"/>
+            </svg>
+            <div id="countdown-container">
+                <div class="time-box">
+                    <span id="hours">--</span><small>SAAT</small>
+                </div>
+                <div class="time-box">
+                    <span id="minutes">--</span><small>DK</small>
+                </div>
+                <div class="time-box">
+                    <span id="seconds">--</span><small>SN</small>
+                </div>
+            </div>
+        </div>
         
         <div id="message">
-            <button id="dark-mode-toggle">🌙</button>
-            <span id="text-content">
-                <div class="skeleton skeleton-text"></div>
-                <div class="skeleton skeleton-text"></div>
-                <div class="skeleton skeleton-text short"></div>
-            </span>
+            <span id="text-content">Yükleniyor...</span>
         </div>
     </div>
 

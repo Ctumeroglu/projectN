@@ -80,7 +80,7 @@ body.dark-mode #dark-mode-toggle { background-color: #E94560; }
 
 /* --- MESAJ SAYFASI (C.HTML) --- */
 #message-container { text-align: center; width: 90%; max-width: 700px; z-index: 10; }
-#countdown { font-size: 3rem; color: #D36C8A; font-weight: 200; margin-bottom: 20px; }
+
 #message {
     font-family: 'Playfair Display', serif;
     padding: 50px;
@@ -91,6 +91,14 @@ body.dark-mode #dark-mode-toggle { background-color: #E94560; }
     line-height: 1.8;
 }
 body.dark-mode #message { background: #16213E; color: white; }
+
+.label {
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #D36C8A;
+    margin-bottom: 10px;
+}
 
 /* --- ANIMASYONLAR --- */
 @keyframes breathe {
@@ -117,7 +125,7 @@ body.dark-mode #message { background: #16213E; color: white; }
 
 /* Halkaların genel ayarı */
 .progress-ring__circle, .progress-ring__circle-bg {
-    transition: stroke-dashoffset 1s ease-in-out;
+    transition: stroke-dashoffset 1s linear; /* Saniyeler için daha yumuşak akış */
     transform: rotate(-90deg);
     transform-origin: 50% 50%;
     stroke-linecap: round;
@@ -126,27 +134,36 @@ body.dark-mode #message { background: #16213E; color: white; }
 #countdown-container {
     position: absolute;
     display: flex;
+    gap: 12px; /* Kutular arası daha geniş boşluk */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Zaman kutucuklarının dikey hizalanması */
+.time-box {
+    display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
 }
 
-#countdown {
-    font-size: 4rem; /* Rakamı büyüttük */
+/* Sayıların boyutu */
+.time-box span {
+    font-size: 1.6rem; /* Saat, DK, SN için ideal boyut */
+    font-weight: 800;
     color: #5A0F2E;
-    font-weight: 700;
     line-height: 1;
-    text-shadow: 0 2px 10px rgba(211, 108, 138, 0.2);
+    text-shadow: 0 2px 8px rgba(211, 108, 138, 0.1);
 }
 
-.days-label {
-    font-size: 0.7rem;
-    letter-spacing: 2px;
-    font-weight: 600;
+/* SAAT, DK, SN etiketleri */
+.time-box small {
+    font-size: 0.55rem;
     color: #D36C8A;
-    margin-top: -5px;
+    font-weight: bold;
+    margin-top: 1px;
+    letter-spacing: 1px;
 }
 
 /* Karanlık modda renkleri patlat */
-body.dark-mode #countdown { color: #FFFFFF; }
+body.dark-mode .time-box span { color: #FFFFFF; }
 body.dark-mode #progress-bar { stroke: #E94560; filter: drop-shadow(0 0 8px #E94560); }
