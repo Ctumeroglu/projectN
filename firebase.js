@@ -23,12 +23,13 @@ export async function handleMessageLogic() {
     if (!id || !textContentEl) return;
 
     const ref = doc(db, "messages", id);
-    // Hedef: 3 Nisan 2026, Saat 00:00 (Nisan ayı indeksi 3'tür)
+    
+    // Hedef Tarih: 3 Nisan 2026, Saat 00:00 (Nisan ayı indeksi 3'tür)
     const expiryDate = new Date(2026, 3, 3, 0, 0, 0); 
 
     const updateCountdown = async () => {
         const now = new Date();
-        const diff = expiryDate - now; // Milisaniye cinsinden fark
+        const diff = expiryDate - now;
 
         if (diff <= 0) {
             try {
@@ -37,43 +38,47 @@ export async function handleMessageLogic() {
             } catch (e) {
                 textContentEl.textContent = "Erişim süresi doldu.";
             }
-            document.getElementById("hours").textContent = "00";
-            document.getElementById("minutes").textContent = "00";
-            document.getElementById("seconds").textContent = "00";
+            // Süre dolduğunda her şeyi sıfırla
+            ["hours", "minutes", "seconds"].forEach(unit => {
+                const el = document.getElementById(unit);
+                if (el) el.textContent = "00";
+            });
             return;
         }
 
-        // Zaman birimlerini hesapla (GÜNÜ ATLIYORUZ, toplam saati alıyoruz)
-        const totalHours = Math.floor(diff / (1000 * 60 * 60)); // Toplam saati hesaplar (örn: 23, 48, 72 gibi)
+        // Zamanı birimlere ayır (Toplam saati alarak günü devre dışı bırakıyoruz)
+        const h = Math.floor(diff / (1000 * 60 * 60));
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-        // Ekrana yazdır (tek hanelilerin başına 0 ekleyerek)
-        document.getElementById("hours").textContent = totalHours.toString().padStart(2, '0');
-        document.getElementById("minutes").textContent = m.toString().padStart(2, '0');
-        document.getElementById("seconds").textContent = s.toString().padStart(2, '0');
+        // HTML elementlerini güncelle
+        const hoursEl = document.getElementById("hours");
+        const minsEl = document.getElementById("minutes");
+        const secsEl = document.getElementById("seconds");
 
-        // Progress bar (Daire) güncelleme
+        if (hoursEl) hoursEl.textContent = h.toString().padStart(2, '0');
+        if (minsEl) minsEl.textContent = m.toString().padStart(2, '0');
+        if (secsEl) secsEl.textContent = s.toString().padStart(2, '0');
+
+        // Progress bar (Daire) güncelleme logic
         if (circle) {
             const radius = 70;
             const circumference = radius * 2 * Math.PI;
             circle.style.strokeDasharray = `${circumference} ${circumference}`;
             
-            const maxDurationHours = 24; // Daireyi 24 saatlik bir periyoda göre doldur (opsiyonel)
-            const percentageHours = Math.min(totalHours / maxDurationHours, 1);
-            
-            circle.style.strokeDashoffset = circumference - (percentageHours * circumference);
+            // Daireyi 24 saatlik bir dilime göre görselleştiriyoruz
+            const percentage = (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60 * 24);
+            circle.style.strokeDashoffset = circumference * percentage;
         }
     };
 
-    // İlk mesajı getir
     try {
         const snap = await getDoc(ref);
         if (snap.exists()) {
-            textContentEl.textContent = snap.data().text; // "Denemeden bilemezsin..." verisini çeker
-            // Geri sayımı her saniye güncellemek için başlat
-            setInterval(updateCountdown, 1000); 
-            updateCountdown(); // İlk açılışta hemen çalıştır
+            textContentEl.textContent = snap.data().text;
+            // Geri sayımı başlat
+            setInterval(updateCountdown, 1000);
+            updateCountdown(); 
         } else {
             textContentEl.textContent = "Mesaj bulunamadı.";
         }
